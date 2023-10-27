@@ -1,0 +1,136 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id String @id @default(uuid())
+  name String
+  gender String
+  username String @unique
+  password String
+  is_enable Boolean
+  role Role @relation(fields: [role_id], references: [role_id])
+  role_id String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+  deleted_at DateTime @default(now())
+  products Product[]
+  checklist Checklist[]
+  product_checklist ProductChecklist[]
+  purchase_order PurchaseOrder[]
+  delivered PurchaseOrder[] @relation("PurchaseOrderDeliveredBy")
+  purchase_order_detail PurchaseOrderDetail[]
+  purchase_order_checklist PurchaseOrderChecklist[]
+  approved PurchaseOrderChecklist[] @relation("PurchaseOrderChecklistApprovedBy")
+}
+
+model Role {
+  role_id String @id @default(uuid())
+  name String
+  is_enable Boolean
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+  deleted_at DateTime @default(now())
+  user User[]
+}
+
+model Product{
+  product_id String @id @default(uuid())
+  name String? 
+  remarks String?
+  product_type String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+  deleted_at DateTime @default(now())
+  user_id String 
+  user User @relation(fields: [user_id], references: [user_id])
+  parent_id String 
+  parent Product? @relation("ProductRelation", fields: [parent_id], references: [product_id])
+  child Product[] @relation("ProductRelation")
+  product_checklist ProductChecklist[]
+  purchase_order_detail PurchaseOrderDetail[]
+}
+
+model Checklist{
+  checklist_id String @id @default(uuid())
+  checklist_name String 
+  weight Int
+  user_id String 
+  user User @relation(fields: [user_id], references: [user_id])
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+  deleted_at DateTime @default(now())
+  product_checklist ProductChecklist[]
+}
+
+model ProductChecklist{
+  product_checklist_id String @id @default(uuid())
+  product Product @relation(fields: [product_id], references: [product_id])
+  product_id String 
+  checklist Checklist @relation(fields: [checklist_id], references: [checklist_id])
+  checklist_id String 
+  user_id String 
+  user User @relation(fields: [user_id], references: [user_id])
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+  deleted_at DateTime @default(now())
+  product_order_checklist PurchaseOrderChecklist[]
+}
+
+model PurchaseOrder{
+  purchase_order_id String @id @default(uuid())
+  period String?
+  status String?
+  purchase_order_document_url String?
+  handover_document_url String?
+  handover_id String?
+  delivered_by String
+  delivered User? @relation("PurchaseOrderDeliveredBy",fields: [delivered_by], references: [user_id])
+  created_by String
+  user User @relation(fields: [created_by], references: [user_id])
+  handover_at DateTime @default(now())
+  delivered_at DateTime @default(now())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+  deleted_at DateTime @default(now())
+  PurchaseOrderDetail PurchaseOrderDetail[]
+}
+
+model PurchaseOrderDetail{
+  purchase_order_detail_id String @id @default(uuid())
+  purchase_order_id String
+  purchase_order PurchaseOrder @relation(fields: [purchase_order_id], references: [purchase_order_id])
+  product_id String 
+  quantity Int
+  product Product @relation(fields: [product_id], references: [product_id])
+  created_by String
+  user User @relation(fields: [created_by], references: [user_id])
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+  deleted_at DateTime @default(now())
+  PurchaseOrderChecklist PurchaseOrderChecklist[]
+}
+
+model PurchaseOrderChecklist{
+  purchase_order_checklist_id String @id @default(uuid())
+  product_checklist_id String
+  product_checklist ProductChecklist @relation(fields: [product_checklist_id], references: [product_checklist_id])
+  product_number Int
+  purchase_order_detail_id String
+  purchase_order_detail PurchaseOrderDetail @relation(fields: [purchase_order_detail_id], references: [purchase_order_detail_id])
+  created_by String
+  user User @relation(fields: [created_by], references: [user_id])
+  approved_by String
+  approved User? @relation("PurchaseOrderChecklistApprovedBy", fields: [approved_by], references: [user_id])
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+  deleted_at DateTime @default(now())
+}
