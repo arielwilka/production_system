@@ -62,19 +62,34 @@ export const updateRole = async (role: Role): Promise<Role> => {
   }
 };
 
-export const deleteRole = async (roleId: string): Promise<boolean> => {
+// export const deleteRole = async (role: Role): Promise<Role> => {
+//   try {
+//     // Make an API call to delete the role with the given ID
+//     const response = await fetch(`http://localhost:3000/api/roles/${role.role_id}`, {
+//       method: 'DELETE',
+//     });
+
+//     if (response.ok) {
+//       return true;
+//     } else {
+//       // Handle error if the API call is not successful
+//       throw new Error('Failed to delete role');
+//     }
+//   } catch (error) {
+//     // Handle any network or other errors
+//     throw error;
+//   }
+// };
+
+const deleteRole = async (roleId: { role_id: string }): Promise<boolean> => {
   try {
     // Make an API call to delete the role with the given ID
-    const response = await fetch(`http://localhost:3000/api/roles/${roleId}`, {
+    const response = await fetch(`http://localhost:3000/api/roles/${roleId.role_id}`, {
       method: 'DELETE',
     });
 
-    if (response.ok) {
-      return true;
-    } else {
-      // Handle error if the API call is not successful
-      throw new Error('Failed to delete role');
-    }
+    // Add a return statement that returns a boolean value
+    return response.ok;
   } catch (error) {
     // Handle any network or other errors
     throw error;
@@ -85,15 +100,16 @@ export const listRoles = async (roleData: RoleData): Promise<Role[]> => {
   try {
     // Make an API call to fetch a list of roles
     const response = await fetch('http://localhost:3000/api/roles', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  cache: 'no-store' // Move the cache option inside the options object
+});
 
     if (response.ok) {
       const roles = await response.json();
-      console.log(roles["data"]);
+      //console.log(roles["data"]);
       roleData.roles = roles["data"]; // Update the roles in RoleData
       return roles;
     } else {

@@ -1,4 +1,5 @@
 // RoleContext.ts
+"use client";
 import React, { createContext, useContext, ReactNode } from 'react';
 // import { RoleData } from '../data/RoleData'; // Import the RoleData type
 import { RoleData } from '../data/RoleData';

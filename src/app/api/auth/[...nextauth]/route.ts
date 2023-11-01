@@ -20,8 +20,8 @@ const authOptions: NextAuthOptions = {
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
-                const { username, password } = credentials as {username: string, password: string};
-                const user: any = await prisma.user.findUnique({where: {username}}); 
+                const { username, role_id, password } = credentials as {username: string,role_id:string, password: string};
+                const user: any = await prisma.user.findUnique({where: {username, role_id}}); 
                 if (!user) {
                     return null;
                 } 
@@ -46,6 +46,9 @@ const authOptions: NextAuthOptions = {
             }
             return session;
         }
+    },
+    pages: {
+        signIn: "/login",
     }
 }
 const handler = NextAuth(authOptions);

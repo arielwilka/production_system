@@ -1,4 +1,6 @@
+
 import { ThemeToggle } from "@/components/theme-toggle"
+import { SwitchDemo } from "./toggletheme";
 import {NavigationMenuDemo}  from "./nav"
 import { cn } from '@/lib/utils';
 export function SiteHeader() {
@@ -9,6 +11,7 @@ export function SiteHeader() {
         <div className="flex items-center">
           <nav className="flex justify-between space-x-10">
               <ThemeToggle />
+              {/* <SwitchDemo /> */}
           </nav>
         </div>
       </div>
