@@ -17,5 +17,4 @@ import {
   interface RoleDeleteComponentProps {
     role: Role;
     onDelete: () => void;
-
   }

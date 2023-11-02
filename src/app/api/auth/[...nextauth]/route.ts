@@ -2,9 +2,26 @@ import { NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import CredentialsProvider from "next-auth/providers/credentials";
+// import type { User } from "@prisma/client";
 import bcrypt from "bcrypt";
 import prisma from "@/lib/prisma";
 import NextAuth from "next-auth/next";
+
+type User = {
+    user_id: string;
+    name: string;
+    gender: string;
+    username: string;
+    password: string;
+    is_enable: boolean;
+    role_id: string;
+    created_at: Date;
+    updated_at: Date;
+    deleted_at: Date;
+    role: {
+        name: string
+    }
+}
 
 const authOptions: NextAuthOptions = {
     session: {
@@ -20,8 +37,17 @@ const authOptions: NextAuthOptions = {
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
-                const { username, role_id, password } = credentials as {username: string,role_id:string, password: string};
-                const user: any = await prisma.user.findUnique({where: {username, role_id}}); 
+                const { username, role, password } = credentials as { username: User["username"], role: User["role"], password: User["password"] };
+                const user: any = await prisma.user.findUnique({
+                    where: {username,role},
+                    include: {
+                        role:{
+                            select:{
+                                name: true
+                            }
+                        }
+                    }
+                }); 
                 if (!user) {
                     return null;
                 } 
@@ -30,7 +56,7 @@ const authOptions: NextAuthOptions = {
                     return null;
                 }
                 return user;
-                }
+            }
         })
     ],
     callbacks: {

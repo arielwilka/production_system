@@ -12,7 +12,15 @@ export async function userRepositoryFindByID(userID: string) {
 }
 
 export async function userRepositoryLists() {
-    const userLists = await prisma.user.findMany();
+    const userLists = await prisma.user.findMany({
+        include: {
+            role:{
+                select:{
+                    name: true
+                }
+            }
+        }
+    });
     return userLists;
 }
 

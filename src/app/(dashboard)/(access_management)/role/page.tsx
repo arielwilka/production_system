@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button"
 import RoleCreateComponent1 from "./components/RoleCreateComponent";
 import { DialogDemo } from "./components/RoleCreateComponent1";
-import { AlertDialogDemo } from "./components/RoleDeleteComponent";
+// import { AlertDialogDemo } from "./components/RoleDeleteComponent";
 export default async function RolePage(){
     
     const roles = await listRoles(roleData);

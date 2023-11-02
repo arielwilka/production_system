@@ -28,7 +28,7 @@ export default function RoleCreateComponent(){
             is_enable: true,
             created_at: new Date(),
             updated_at: new Date(),
-            deleted_at: '',
+            deleted_at: new Date(),
         });
         router.refresh();
         setIsOpen(false);

@@ -22,7 +22,7 @@ export async function PUT (request: NextRequest, { params }: { params: { id: str
     }
 }
 
-export async function DELETE ({ params }: { params: { id: string } }) {
+export async function DELETE (request: NextRequest, { params }: { params: { id: string } }) {
     const id = params.id;
     try {
         const roleUpdate = await roleServiceDelete(id);
@@ -32,7 +32,7 @@ export async function DELETE ({ params }: { params: { id: string } }) {
     }
 }
 
-export async function GET ({ params }: { params: { id: string } }) {
+export async function GET (request: NextRequest, { params }: { params: { id: string } }) {
     const id = params.id;
     try {
         const roleList = await roleServiceFindByID(id);
