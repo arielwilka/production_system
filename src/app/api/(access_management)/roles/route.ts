@@ -18,7 +18,7 @@ export async function POST (request: NextRequest) {
         updated_at: new Date(),
         deleted_at: new Date()
     };
-    console.log(requestRole);
+    // console.log(requestRole);
     try {
         const newUser = await roleServiceCreate(requestRole);
         return NextResponse.json({status:200, message:"success", data:newUser})

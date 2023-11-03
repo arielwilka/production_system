@@ -1,7 +1,7 @@
-import {User, UserData, UserRead } from "../data/UserData";
+import { UserData,User } from "../data/userData";
 
 const userData: UserData = {
-    user: undefined,
+    users: undefined,
     createUser: function (user: User): Promise<User> {
         throw new Error("Function not implemented.");
     },
@@ -11,7 +11,7 @@ const userData: UserData = {
     deleteUser: function (userId: string): Promise<boolean> {
         throw new Error("Function not implemented.");
     },
-    listUser: function (): Promise<UserRead[]> {
+    listUser: function (): Promise<User[]> {
         throw new Error("Function not implemented.");
     },
 }

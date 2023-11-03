@@ -1,5 +1,5 @@
 import { listRoles } from "./data/RoleData";
-import roleData from "./contexts/DataProvider";
+import roleData from "./contexts/roleProvider";
 import React from 'react'
 import {
     Table,
@@ -13,9 +13,8 @@ import {
   import { EditRole } from "./components/RoleEditComponent";
   import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button"
-import RoleCreateComponent1 from "./components/RoleCreateComponent";
 import { DialogDemo } from "./components/RoleCreateComponent1";
-// import { AlertDialogDemo } from "./components/RoleDeleteComponent";
+import RoleDeleteComponent from "./components/RoleDeleteComponent";
 export default async function RolePage(){
     
     const roles = await listRoles(roleData);
@@ -48,8 +47,9 @@ export default async function RolePage(){
                         />
                     </TableCell>
                     <TableCell>{role.updated_at.toLocaleString()}</TableCell>
-                    <TableCell className='text-center'>
+            <TableCell className='text-center gap-2'>
                     <EditRole role={role}/>
+                    <RoleDeleteComponent role={role}/>
                     </TableCell>
                 </TableRow>
             ))}

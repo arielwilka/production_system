@@ -17,8 +17,6 @@ export async function roleRepositoryLists() {
 }
 
 export async function roleRepositoryUpdate(requestRole: Role, roleID: string) {
-    console.log(roleID);
-    console.log(requestRole);
     const roleUpdate = await prisma.role.update({
         where: { role_id: roleID },
         data: requestRole,

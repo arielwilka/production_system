@@ -1,4 +1,5 @@
-import { listUser } from "./data/UserData";
+import { listUser } from './data/userData';
+import userData from './contexts/userProvider';
 import React from 'react'
 import {
     Table,
@@ -10,19 +11,17 @@ import {
     TableRow,
   } from "@/components/ui/table";
   import { Checkbox } from "@/components/ui/checkbox";
-import userData from "./contexts/DataProvider";
-// import { CreateUser } from "./components/UserCreateComponent";
-import UserCreateComponent from "./components/UserCreateComponent";
-
+  import CreateUser from "./components/UserCreateComponent";
+import roleData from '../role/contexts/roleProvider';
+import { listRoles } from '../role/data/RoleData';
   export default async function UserPage(){
-    
-    const user = await listUser(userData);
+
+    await listUser(userData);
+    const roles = await listRoles(roleData);
     return (
         <div>
         <div className='flex justify-end mb-2 mt-2 mr-10' >
-            {/* <CreateUser roles={[]}/> */}
-            {/* <SelectDemo/> */}
-            <UserCreateComponent/>
+        <CreateUser roles={roleData.roles ? roleData.roles : []} />
         </div>
         <div>
             <Table className='w-full table-auto'>
@@ -40,7 +39,7 @@ import UserCreateComponent from "./components/UserCreateComponent";
                 </TableRow>
             </TableHeader>
             <TableBody>
-            {userData.user?.map((user, index) => (
+            {userData.users?.map((user, index) => (
                 <TableRow key={user.user_id}>
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>{user.name}</TableCell>
@@ -55,7 +54,6 @@ import UserCreateComponent from "./components/UserCreateComponent";
                     </TableCell>
                     <TableCell>{user.updated_at.toLocaleString()}</TableCell>
                     <TableCell className='text-center'>
-                    {/* <EditRole role={user}/> */}
                     </TableCell>
                 </TableRow>
             ))}

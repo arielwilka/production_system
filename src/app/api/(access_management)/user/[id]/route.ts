@@ -1,19 +1,8 @@
 import { NextRequest,NextResponse } from "next/server";
+import type { User } from "@prisma/client";
 import bcrypt from 'bcrypt';
 import { userServiceUpdate, userServiceFindByID, userServiceDelete } from "../service";
-import prisma from "@/lib/prisma";
-export interface User {
-    user_id: string;
-    name: string;
-    gender: string;
-    username: string;
-    password: string;
-    is_enable: boolean;
-    role_id: string;
-    created_at: Date;
-    updated_at: Date;
-    deleted_at: Date;
-  }
+
 export async function PUT (request: NextRequest, { params }: { params: { id: string } }) {
     const id = params.id;
     const body: User = await request.json();
@@ -29,10 +18,7 @@ export async function PUT (request: NextRequest, { params }: { params: { id: str
         is_enable: Boolean(is_enable),
         created_at: created_at,
         updated_at: new Date(),
-        deleted_at: deleted_at,
-        role: {
-            name: role_id
-        }
+        deleted_at: deleted_at
     };
     try {
         const userUpdate = await userServiceUpdate(requestUser, id);
@@ -42,7 +28,7 @@ export async function PUT (request: NextRequest, { params }: { params: { id: str
     }
 }
 
-export async function DELETE ({ params }: { params: { id: string } }) {
+export async function DELETE (request: NextRequest,{ params }: { params: { id: string } }) {
     const id = params.id;
     try {
         const userUpdate = await userServiceDelete(id);
@@ -52,7 +38,7 @@ export async function DELETE ({ params }: { params: { id: string } }) {
     }
 }
 
-export async function GET ({ params }: { params: { id: string } }) {
+export async function GET (request: NextRequest, { params }: { params: { id: string } }) {
     const id = params.id;
     try {
         const userList = await userServiceFindByID(id);

@@ -2,7 +2,7 @@
 import { useState, SyntheticEvent } from "react";
 import { useRouter } from "next/navigation";
 import {createRole, Role } from "../data/RoleData";
-import roleData from "../contexts/DataProvider";
+import roleData from "../contexts/roleProvider";
 import { Button } from "@/components/ui/button";
 export default function RoleCreateComponent(){
     const [newRole, setNewRole] = useState<Role>({

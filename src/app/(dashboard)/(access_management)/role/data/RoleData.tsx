@@ -3,7 +3,7 @@ export type RoleData = {
   roles: Role[] | undefined;
   createRole: (role: Role) => Promise<Role>;
   updateRole: (role: Role) => Promise<Role>;
-  deleteRole: (roleId: string) => Promise<boolean>;
+  deleteRole: (role_id: string) => Promise<boolean>;
   listRoles: () => Promise<Role[]>;
 };
 
@@ -80,21 +80,25 @@ export const updateRole = async (role: Role): Promise<Role> => {
 //     throw error;
 //   }
 // };
-
-export const deleteRole = async (roleId: { roleId: string }): Promise<boolean> => {
+export const deleteRole = async (role_id: string): Promise<boolean> => {
   try {
     // Make an API call to delete the role with the given ID
-    const response = await fetch(`http://localhost:3000/api/roles/${roleId}`, {
+    const response = await fetch(`http://localhost:3000/api/roles/${role_id}`, {
       method: 'DELETE',
     });
 
-    // Add a return statement that returns a boolean value
-    return response.ok;
+    if (response.ok) {
+      return true;
+    } else {
+      // Handle error if the API call is not successful
+      throw new Error('Failed to delete role');
+    }
   } catch (error) {
     // Handle any network or other errors
     throw error;
   }
 };
+
 
 export const listRoles = async (roleData: RoleData): Promise<Role[]> => {
   try {
@@ -109,7 +113,6 @@ export const listRoles = async (roleData: RoleData): Promise<Role[]> => {
 
     if (response.ok) {
       const roles = await response.json();
-      //console.log(roles["data"]);
       roleData.roles = roles["data"]; // Update the roles in RoleData
       return roles;
     } else {

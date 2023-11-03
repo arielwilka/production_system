@@ -1,318 +1,188 @@
 "use client";
-import { useState, SyntheticEvent } from "react";
+import { useState, SyntheticEvent, ChangeEvent } from "react";
+import type { Role} from "@prisma/client";
 import { useRouter } from "next/navigation";
-import roleData from "../../role/contexts/DataProvider";
-import { listUser, User } from "../data/UserData";
-import userData from "../contexts/DataProvider";
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox";
-// import { SelectDemo } from "../../role/components/dropdown";
-import type { Role } from "@prisma/client";
+import { createUser,User} from "../data/userData";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,} from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { listRoles } from "../../role/data/RoleData";
- 
-const CreateUser = async() => {
-  const roles = await listRoles(roleData);
-  const [newUser, setNewUser] = useState<User>({
-    user_id: '',
-    name: '',
-    gender: '',
-    username: '',
-    password: '',
-    role_id: '',
-    is_enable: true,
-    created_at: new Date(),
-    updated_at: new Date(),
-    deleted_at: new Date(),
-  })
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-  const handleSubmitUser = async (e: SyntheticEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    await listUser(userData);
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+  } from "@/components/ui/dialog"
+  import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,} from "@/components/ui/select"
+  import { Input } from "@/components/ui/input"
+  import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button";
+
+type CreateUserProps = {
+    roles: Role[];
+  };
+  
+  const CreateUser: React.FunctionComponent<CreateUserProps> = ({ roles }: {roles: Role[]}) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [newUser, setNewUser] = useState<User>({
+        user_id: '',
+        name: '',
+        gender: '',
+        username: '',
+        password: '',
+        role_id: '',
+        is_enable: true,
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: new Date(),
+        role: {
+          name: '',
+        }
+    })
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [isLoading, setIsLoading] = useState(false);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+  
+    const router = useRouter();
+    const handleSelectChange = (value: string) => {
+      setNewUser({ ...newUser, role_id: value });
+  }
+    const handleEnableChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setNewUser({ ...newUser, is_enable: e.target.checked });
+    }
+    const handleSubmitUser = async (e: SyntheticEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+        await createUser(newUser);
         setIsLoading(false);
-    setNewUser({
-      user_id: '',
-      name: '',
-      gender: '',
-      username: '',
-      password: '',
-      role_id: '',
-      is_enable: true,
-      created_at: new Date(),
-      updated_at: new Date(),
-      deleted_at: new Date(),
-    });
-    router.refresh();
+        setNewUser({
+            user_id: '',
+            name: '',
+            gender: '',
+            username: '',
+            password: '',
+            role_id: '',
+            is_enable: true,
+            created_at: new Date(),
+            updated_at: new Date(),
+            deleted_at: new Date(),
+            role: {
+              name: '',
+            }
+        });
+        router.refresh();
+    };
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Create</Button>
+        <Button variant="default">Create User</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create User</DialogTitle>
           <DialogDescription>
-            Create a new user here. Click submit when youre done.
+            Create a new user to access your account
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmitUser}>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Name
-              </Label>
+              <Label htmlFor="name">Name</Label>
               <Input
-                type="text"
+                id="name"
                 value={newUser.name}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, name: e.target.value })
-                }
+                onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                className="col-span-3"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="gender" className="text-right">
-                Gender
-              </Label>
+              <Label htmlFor="gender">Gender</Label>
               <Input
-                type="text"
+                id="gender"
                 value={newUser.gender}
                 onChange={(e) =>
                   setNewUser({ ...newUser, gender: e.target.value })
                 }
+                className="col-span-3"
+                required
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="username" className="text-right">
-                Username
-              </Label>
+              <Label htmlFor="username">Username</Label>
               <Input
-
-                type="text"
+                id="username"
                 value={newUser.username}
                 onChange={(e) =>
                   setNewUser({ ...newUser, username: e.target.value })
                 }
+                className="col-span-3"
+                required={true}
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="password" className="text-right">
-                Password
-              </Label>
+              <Label htmlFor="password">Password</Label>
               <Input
+                id="password"
                 type="password"
                 value={newUser.password}
                 onChange={(e) =>
                   setNewUser({ ...newUser, password: e.target.value })
                 }
+                className="col-span-3"
+                required={true}
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="role_id" className="text-right">
-                Role
-              </Label>
-              <Select value={newUser.role_id}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a Role" />
+              <Label htmlFor="role">Role</Label>
+              <Select
+                onValueChange={handleSelectChange}
+                required={true}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select a role" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent >
+                  <SelectGroup>
+                  <SelectLabel>Role</SelectLabel>
                   {roles.map((role) => (
-                    <SelectItem key={role.role_id} value={role.role_id}>
-                      {role.name}
-                    </SelectItem>
-                  ))}
+                <SelectItem key={role.role_id} value={role.role_id}>
+                  {role.name}
+                </SelectItem>
+                    ))}
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="is_enable" className="text-right">
-                Is Enable
-              </Label>
+              <Label htmlFor="is_enable">Enable</Label>
               <Input
+                id="is_enable"
                 type="checkbox"
                 checked={newUser.is_enable}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, is_enable: e.target.checked })
-                }
+                onChange={handleEnableChange}
+                className="col-span-3"
+                required={true}
               />
             </div>
           </div>
           <DialogFooter>
-            <DialogClose asChild>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Loading..." : "Create"}
-              </Button>
-            </DialogClose>
+          <DialogClose asChild>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Loading..." : "Create"}
+            </Button>
+          </DialogClose>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
-
   )
-  }
-  
-}
+};
 
-export default CreateUser
-  
-  //  const [newUser, setNewUser] = useState<User>({
-  //   user_id: '',
-  //   name: '',
-  //   gender: '',
-  //   username: '',
-  //   password: '',
-  //   role_id: '',
-  //   is_enable: true,
-  //   created_at: new Date(),
-  //   updated_at: new Date(),
-  //   deleted_at: new Date(),
-  // })
-  // const [isOpen, setIsOpen] = useState(false);
-  // const [isLoading, setIsLoading] = useState(false);
-  // const router = useRouter();
-  
-//   const handleSubmitUser = async (e: SyntheticEvent) => {
-//     e.preventDefault();
-//     setIsLoading(true);
-//     await listUser(userData);
-//         setIsLoading(false);
-//     setNewUser({
-//       user_id: '',
-//       name: '',
-//       gender: '',
-//       username: '',
-//       password: '',
-//       role_id: '',
-//       is_enable: true,
-//       created_at: new Date(),
-//       updated_at: new Date(),
-//       deleted_at: new Date(),
-//     });
-//     router.refresh();
-//   };
-//   return (
-//     <Dialog>
-//       <DialogTrigger asChild>
-//         <Button variant="outline">Create</Button>
-//       </DialogTrigger>
-//       <DialogContent className="sm:max-w-[425px]">
-//         <DialogHeader>
-//           <DialogTitle>Create User</DialogTitle>
-//           <DialogDescription>
-//             Create a new user here. Click submit when youre done.
-//           </DialogDescription>
-//         </DialogHeader>
-//         <form onSubmit={handleSubmitUser}>
-//           <div className="grid gap-4 py-4">
-//             <div className="grid grid-cols-4 items-center gap-4">
-//               <Label htmlFor="name" className="text-right">
-//                 Name
-//               </Label>
-//               <Input
-//                 type="text"
-//                 value={newUser.name}
-//                 onChange={(e) =>
-//                   setNewUser({ ...newUser, name: e.target.value })
-//                 }
-//               />
-//             </div>
-//             <div className="grid grid-cols-4 items-center gap-4">
-//               <Label htmlFor="gender" className="text-right">
-//                 Gender:
-//               </Label>
-//               <Input
-//                 type="text"
-//                 value={newUser.gender}
-//                 onChange={(e) =>
-//                   setNewUser({ ...newUser, gender: e.target.value })
-//                 }
-//               />
-//             </div>
-//             <div className="grid grid-cols-4 items-center gap-4">
-//               <Label htmlFor="username" className="text-right">
-//                 Username:
-//               </Label>
-//               <Input
-//                 type="text"
-//                 value={newUser.username}
-//                 onChange={(e) =>
-//                   setNewUser({ ...newUser, username: e.target.value })
-//                 }
-//               />
-//             </div>
-//             <div className="grid grid-cols-4 items-center gap-4">
-//               <Label htmlFor="password" className="text-right">
-//                 Password:
-//               </Label>
-//               <Input
-//                 type="text"
-//                 value={newUser.password}
-//                 onChange={(e) =>
-//                   setNewUser({ ...newUser, password: e.target.value })
-//                 }
-//               />
-//             </div>
-//             <div className="grid grid-cols-4 items-center gap-4">
-//               <Label htmlFor="role_id" className="text-right">
-//                 Role:
-//               </Label>
-//               <Select onValueChange={(value) => setNewUser({ ...newUser, role_id: value })}>
-//                 <SelectTrigger>
-//                   <SelectValue>{newUser.role_id}</SelectValue>
-//                 </SelectTrigger>
-//                 <SelectContent>
-//                   <SelectGroup>
-//                     {roles.map((role) => (
-//                       <SelectItem value={role.role_id} key={role.role_id} >
-//                         {role.name}
-//                       </SelectItem>
-//                     ))}
-//                   </SelectGroup>
-//                 </SelectContent>
-//               </Select>              
-//             </div>
-//             <div className="grid grid-cols-4 items-center gap-4">
-//               <Label htmlFor="is_enable" className="text-right">
-//                 Enable:
-//               </Label>
-//               <Input
-//                 type="checkbox"
-//                 checked={newUser.is_enable}
-//                 onChange={(e) =>
-//                   setNewUser({ ...newUser, is_enable: e.target.checked })
-//                 }
-//               />
-//             </div>
-//           </div>
-//           <DialogFooter>
-//             <DialogClose asChild>
-//               <Button type="submit" disabled={isLoading}>
-//                 {isLoading ? "Loading..." : "Create"}
-//               </Button>
-//             </DialogClose>
-//           </DialogFooter>
-//         </form>
-//       </DialogContent>
-//     </Dialog>
-//   )
-// }
+export default CreateUser;
